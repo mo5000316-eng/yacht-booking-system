@@ -50,6 +50,27 @@
 
             <div class="form-section mb-4">
               <h5 class="form-section-title">
+                <i class="bi bi-building-check me-2"></i>Project
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label required">Project</label>
+                  <select name="project" id="projectSelect" class="form-select" required onchange="toggleUnit(this)">
+                    <option value="">— Select a project —</option>
+                    <option value="Tomorrow-166">Tomorrow-166</option>
+                    <option value="Tomorrow Commercial Tower">Tomorrow Commercial Tower</option>
+                    <option value="Non-exclusive member of Tomorrow World">Non-exclusive member of Tomorrow World</option>
+                  </select>
+                </div>
+                <div class="col-md-6" id="unitRow" style="display:none;">
+                  <label class="form-label required">Unit Number</label>
+                  <input type="text" name="unit_number" id="unitNumber" class="form-control" placeholder="e.g. 1201">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
                 <i class="bi bi-building me-2"></i>Client / Event Target
               </h5>
               <div class="row g-3">
@@ -176,4 +197,16 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleUnit(sel) {
+  var needsUnit = ['Tomorrow-166', 'Tomorrow Commercial Tower'].includes(sel.value);
+  var row = document.getElementById('unitRow');
+  var input = document.getElementById('unitNumber');
+  row.style.display = needsUnit ? 'block' : 'none';
+  input.required = needsUnit;
+}
+</script>
 {% endblock %}

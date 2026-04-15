@@ -137,6 +137,8 @@ def booking_customer():
             booking = Booking(
                 booking_ref=Booking.generate_ref(),
                 booking_type='customer',
+                project=request.form.get('project', '').strip(),
+                unit_number=request.form.get('unit_number', '').strip(),
                 customer_name=request.form['customer_name'].strip(),
                 customer_email=request.form['customer_email'].strip().lower(),
                 customer_phone=request.form.get('customer_phone', '').strip(),
@@ -176,6 +178,8 @@ def booking_staff():
             booking = Booking(
                 booking_ref=Booking.generate_ref(),
                 booking_type='internal',
+                project=request.form.get('project', '').strip(),
+                unit_number=request.form.get('unit_number', '').strip(),
                 user_id=current_user.id,
                 customer_name=current_user.name or request.form['applicant_name'].strip(),
                 customer_email=current_user.email,

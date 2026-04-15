@@ -41,6 +41,12 @@
     <div class="admin-card p-4 mb-3">
       <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-map me-2"></i>Event Details</h6>
       <div class="row g-2">
+        {% if booking.project %}
+        <div class="col-md-6"><div class="small text-muted">Project</div><div class="fw-medium">{{ booking.project }}</div></div>
+        {% if booking.unit_number %}
+        <div class="col-md-6"><div class="small text-muted">Unit Number</div><div class="fw-medium">{{ booking.unit_number }}</div></div>
+        {% endif %}
+        {% endif %}
         <div class="col-md-6"><div class="small text-muted">Yacht</div><div class="fw-medium">{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</div></div>
         <div class="col-md-6"><div class="small text-muted">Destination</div><div>{{ booking.destination or '—' }}</div></div>
         <div class="col-md-4"><div class="small text-muted">Date</div><div class="fw-medium">{{ booking.booking_date }}</div></div>

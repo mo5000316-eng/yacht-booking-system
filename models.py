@@ -73,6 +73,10 @@ class Booking(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
+    # Project
+    project = db.Column(db.String(100))        # Tomorrow-166 / Tomorrow Commercial Tower / Non-exclusive member
+    unit_number = db.Column(db.String(50))     # Unit number (for Tomorrow-166 / Commercial Tower)
+
     # Customer / Applicant info
     customer_name = db.Column(db.String(100), nullable=False)
     customer_email = db.Column(db.String(120), nullable=False)
