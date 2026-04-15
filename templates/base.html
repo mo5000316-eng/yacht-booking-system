@@ -107,5 +107,74 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 {% block extra_js %}{% endblock %}
+
+<!-- Background Music Player -->
+<div id="music-btn" onclick="toggleMusic()" title="Click to play ambient music">
+  <i class="bi bi-music-note-beamed" id="music-icon"></i>
+  <span id="music-label">Music</span>
+</div>
+<div id="yt-player"></div>
+
+<style>
+#music-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 56px;
+  height: 56px;
+  background: rgba(27,58,107,0.92);
+  color: #C9A84C;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  transition: all .2s;
+  backdrop-filter: blur(6px);
+}
+#music-label { font-size: 0.55rem; letter-spacing: 0.5px; text-transform: uppercase; }
+#music-btn:hover { transform: scale(1.1); background: #1B3A6B; }
+#music-btn.playing { background: #C9A84C; color: #fff; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+#music-btn.playing { animation: pulse 2s ease-in-out infinite; }
+#yt-player { position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0; pointer-events:none; }
+</style>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+var ytPlayer, musicPlaying = false;
+
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('yt-player', {
+    videoId: 'UfcAVejslrU',  // Space Ambient Music - Stellardrone (3hrs)
+    playerVars: { autoplay: 0, loop: 1, playlist: 'UfcAVejslrU', controls: 0 },
+    events: { onReady: function(){} }
+  });
+}
+
+function toggleMusic() {
+  var btn = document.getElementById('music-btn');
+  var label = document.getElementById('music-label');
+  if (!ytPlayer) return;
+
+  if (!musicPlaying) {
+    ytPlayer.setVolume(40);
+    ytPlayer.playVideo();
+    btn.classList.add('playing');
+    label.textContent = 'Stop';
+    musicPlaying = true;
+  } else {
+    ytPlayer.pauseVideo();
+    btn.classList.remove('playing');
+    label.textContent = 'Music';
+    musicPlaying = false;
+  }
+}
+</script>
 </body>
 </html>

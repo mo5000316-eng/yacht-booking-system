@@ -515,6 +515,21 @@ def admin_users():
                 u.is_active = not u.is_active
                 db.session.commit()
                 flash('Account status updated.', 'info')
+        elif action == 'edit':
+            u = User.query.get_or_404(request.form['user_id'])
+            u.name = request.form['name'].strip()
+            u.email = request.form['email'].strip().lower()
+            u.department = request.form.get('department', '').strip()
+            u.job_title = request.form.get('job_title', '').strip()
+            u.role = request.form.get('role', u.role)
+            db.session.commit()
+            flash(f'{u.name} has been updated.', 'success')
+        elif action == 'delete':
+            u = User.query.get_or_404(request.form['user_id'])
+            if u.id != current_user.id:
+                db.session.delete(u)
+                db.session.commit()
+                flash('Account deleted.', 'info')
         elif action == 'reset_password':
             u = User.query.get_or_404(request.form['user_id'])
             new_pw = request.form.get('new_password', '').strip()
