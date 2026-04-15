@@ -1,0 +1,152 @@
+/* ============================================================
+   Tomorrow World – Yacht Booking System
+   ============================================================ */
+
+:root {
+  --tw-navy:  #1B3A6B;
+  --tw-gold:  #C9A84C;
+  --tw-dark:  #0D1F3A;
+  --tw-light: #F0F4FB;
+}
+
+/* ---- General ---- */
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #2d3748;
+}
+
+.text-navy  { color: var(--tw-navy) !important; }
+.text-gold  { color: var(--tw-gold) !important; }
+.bg-navy    { background-color: var(--tw-navy) !important; }
+
+/* ---- Navbar ---- */
+.tw-navbar {
+  background: rgba(27, 58, 107, 0.97);
+  backdrop-filter: blur(8px);
+  padding: 0.6rem 0;
+}
+.tw-navbar .navbar-brand { color: var(--tw-gold) !important; letter-spacing: 0.5px; }
+.tw-navbar .nav-link     { color: rgba(255,255,255,0.85); transition: color .2s; font-size: 0.9rem; }
+.tw-navbar .nav-link:hover { color: var(--tw-gold); }
+
+/* ---- Hero ---- */
+.tw-hero {
+  min-height: 560px;
+  padding: 6rem 0 4rem;
+  margin-top: 56px;
+}
+
+/* ---- Stats Bar ---- */
+.tw-stats-bar {
+  background: var(--tw-navy);
+  color: #fff;
+}
+.stat-item { }
+.stat-num  { font-size: 1.6rem; font-weight: 700; color: var(--tw-gold); }
+.stat-lbl  { font-size: 0.78rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ---- Buttons ---- */
+.btn-navy {
+  background: var(--tw-navy); color: #fff; border: none;
+}
+.btn-navy:hover { background: #0f2447; color: #fff; }
+.btn-outline-navy {
+  border: 2px solid var(--tw-navy); color: var(--tw-navy);
+}
+.btn-outline-navy:hover { background: var(--tw-navy); color: #fff; }
+.btn-gold {
+  background: var(--tw-gold); color: #fff; border: none; font-weight: 600;
+}
+.btn-gold:hover { background: #b08a3a; color: #fff; }
+
+/* ---- Section titles ---- */
+.section-title {
+  font-weight: 700; color: var(--tw-navy);
+  position: relative; padding-bottom: 12px;
+}
+.section-title::after {
+  content: ''; position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 48px; height: 3px; background: var(--tw-gold);
+  border-radius: 2px;
+}
+
+/* ---- Yacht Cards ---- */
+.yacht-card {
+  border: none; border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: transform .2s, box-shadow .2s;
+  overflow: hidden;
+}
+.yacht-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+}
+.yacht-card-img {
+  height: 180px;
+  background: linear-gradient(135deg, var(--tw-navy), #2a5298);
+}
+
+/* ---- Badges ---- */
+.tw-badge-navy { background: var(--tw-navy); }
+.tw-badge-gold { background: var(--tw-gold); }
+
+/* ---- Steps ---- */
+.step-circle {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--tw-navy); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 700;
+}
+
+/* ---- CTA section ---- */
+.tw-cta {
+  background: linear-gradient(135deg, var(--tw-dark), var(--tw-navy));
+}
+
+/* ---- Footer ---- */
+.tw-footer {
+  background: var(--tw-dark); color: rgba(255,255,255,0.6);
+}
+
+/* ---- Form sections ---- */
+.form-section {
+  padding: 1.25rem;
+  background: #fafbff;
+  border-radius: 10px;
+  border: 1px solid #e8edf5;
+}
+.form-section-title {
+  font-size: 1rem; font-weight: 600;
+  color: var(--tw-navy); margin-bottom: 1rem;
+}
+.form-label.required::after {
+  content: ' *'; color: #dc3545;
+}
+.form-check-lg .form-check-input { width: 1.15em; height: 1.15em; margin-top: 0.15em; }
+.form-check-lg .form-check-label { font-size: 0.9rem; }
+
+/* ---- Card header ---- */
+.tw-card-header {
+  background: var(--tw-navy); color: #fff;
+  border-radius: 0.375rem 0.375rem 0 0;
+  padding: 0.75rem 1.25rem;
+}
+
+/* ---- Booking ref ---- */
+.booking-ref-box {
+  background: #f0f4ff;
+  border: 2px solid var(--tw-navy);
+  border-radius: 10px;
+  padding: 1.25rem;
+  text-align: center;
+}
+.booking-ref-num {
+  font-size: 2rem; font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--tw-navy);
+  letter-spacing: 2px;
+}
+
+/* ---- Admin ---- */
+.badge.bg-navy { background: var(--tw-navy) !important; }

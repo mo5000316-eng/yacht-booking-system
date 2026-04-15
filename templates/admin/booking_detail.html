@@ -1,0 +1,113 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Booking {{ booking.booking_ref }} – TW Admin{% endblock %}
+{% block breadcrumb %}
+<span class="text-muted small">
+  <a href="{{ url_for('admin_bookings') }}" class="text-muted">Bookings</a>
+  <i class="bi bi-chevron-right mx-1"></i>{{ booking.booking_ref }}
+</span>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-1">{{ booking.booking_ref }}</h4>
+    <span class="badge bg-{{ booking.status_badge_class }} fs-6">{{ booking.status_label }}</span>
+    <span class="badge {% if booking.booking_type=='customer' %}bg-info{% else %}bg-secondary{% endif %} ms-1">
+      {{ booking.type_label }}
+    </span>
+  </div>
+  <a href="{{ url_for('admin_bookings') }}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back
+  </a>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="admin-card p-4 mb-3">
+      <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-person me-2"></i>Customer / Applicant</h6>
+      <div class="row g-2">
+        <div class="col-md-6"><div class="small text-muted">Name</div><div class="fw-medium">{{ booking.customer_name }}</div></div>
+        <div class="col-md-6"><div class="small text-muted">Email</div><div><a href="mailto:{{ booking.customer_email }}">{{ booking.customer_email }}</a></div></div>
+        <div class="col-md-6"><div class="small text-muted">Phone</div><div>{{ booking.customer_phone or '—' }}</div></div>
+        <div class="col-md-6"><div class="small text-muted">Company / Client</div><div>{{ booking.client_company or '—' }}</div></div>
+        {% if booking.booking_type == 'internal' %}
+        <div class="col-md-4"><div class="small text-muted">Department</div><div>{{ booking.department or '—' }}</div></div>
+        <div class="col-md-4"><div class="small text-muted">Job Title</div><div>{{ booking.job_title or '—' }}</div></div>
+        <div class="col-md-4"><div class="small text-muted">Supervisor</div><div>{{ booking.supervisor or '—' }}</div></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="admin-card p-4 mb-3">
+      <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-map me-2"></i>Event Details</h6>
+      <div class="row g-2">
+        <div class="col-md-6"><div class="small text-muted">Yacht</div><div class="fw-medium">{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</div></div>
+        <div class="col-md-6"><div class="small text-muted">Destination</div><div>{{ booking.destination or '—' }}</div></div>
+        <div class="col-md-4"><div class="small text-muted">Date</div><div class="fw-medium">{{ booking.booking_date }}</div></div>
+        <div class="col-md-4"><div class="small text-muted">Start</div><div class="fw-medium">{{ (booking.start_time|string)[:5] }}</div></div>
+        <div class="col-md-4"><div class="small text-muted">End</div><div class="fw-medium">{{ (booking.end_time|string)[:5] }}</div></div>
+        <div class="col-md-4"><div class="small text-muted">Guests</div><div class="fw-medium">{{ booking.num_passengers }}</div></div>
+      </div>
+    </div>
+
+    <div class="admin-card p-4">
+      <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-list-check me-2"></i>Special Requests</h6>
+      <div class="d-flex flex-wrap gap-2 mb-2">
+        {% macro req_badge(val, label, icon) %}
+        <span class="badge {% if val %}bg-success{% else %}bg-light text-muted border{% endif %}">
+          <i class="bi bi-{{ icon }} me-1"></i>{{ label }}
+        </span>
+        {% endmacro %}
+        {{ req_badge(booking.has_alcohol, 'Alcohol', 'cup-straw') }}
+        {{ req_badge(booking.has_pizza, 'Pizza', 'emoji-smile') }}
+        {{ req_badge(booking.has_vegetarian, 'Vegetarian', 'leaf') }}
+        {{ req_badge(booking.is_offshore, 'Offshore', 'tsunami') }}
+        {{ req_badge(booking.marketing_support, 'Marketing', 'megaphone') }}
+      </div>
+      {% if booking.food_allergies %}<div class="small mt-1"><span class="text-muted">Food Allergies: </span>{{ booking.food_allergies }}</div>{% endif %}
+      {% if booking.other_requests %}<div class="small mt-1"><span class="text-muted">Other: </span>{{ booking.other_requests }}</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    {% if booking.status == 'pending' %}
+    <div class="admin-card p-4 mb-3">
+      <h6 class="fw-bold mb-3">Approval Actions</h6>
+      <form method="POST" action="{{ url_for('admin_approve', bid=booking.id) }}" class="mb-3">
+        <div class="mb-2">
+          <label class="form-label small">Notes (optional)</label>
+          <textarea name="notes" class="form-control form-control-sm" rows="2"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success w-100">
+          <i class="bi bi-check-circle me-2"></i>Approve Booking
+        </button>
+      </form>
+      <form method="POST" action="{{ url_for('admin_reject', bid=booking.id) }}">
+        <div class="mb-2">
+          <label class="form-label small required">Rejection Reason</label>
+          <textarea name="reason" class="form-control form-control-sm" rows="2" required></textarea>
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">Internal Notes</label>
+          <textarea name="notes" class="form-control form-control-sm" rows="2"></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger w-100">
+          <i class="bi bi-x-circle me-2"></i>Reject Booking
+        </button>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="admin-card p-4">
+      <h6 class="fw-bold mb-3">Booking Info</h6>
+      <table class="table table-borderless table-sm mb-0">
+        <tr><td class="text-muted small">Submitted</td><td class="small">{{ booking.created_at.strftime('%Y-%m-%d %H:%M') if booking.created_at else '—' }}</td></tr>
+        {% if booking.approved_at %}<tr><td class="text-muted small">Approved At</td><td class="small">{{ booking.approved_at.strftime('%Y-%m-%d %H:%M') }}</td></tr>{% endif %}
+        {% if booking.approver %}<tr><td class="text-muted small">Approved By</td><td class="small">{{ booking.approver.name }}</td></tr>{% endif %}
+        {% if booking.rejection_reason %}<tr><td class="text-muted small">Reason</td><td class="small text-danger">{{ booking.rejection_reason }}</td></tr>{% endif %}
+        {% if booking.admin_notes %}<tr><td class="text-muted small">Notes</td><td class="small">{{ booking.admin_notes }}</td></tr>{% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

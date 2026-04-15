@@ -1,0 +1,47 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Customers – TW Admin{% endblock %}
+{% block breadcrumb %}<span class="text-muted small"><i class="bi bi-people me-1"></i>Customers</span>{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">Customer Records</h4>
+  <a href="{{ url_for('admin_export') }}" class="btn btn-success btn-sm">
+    <i class="bi bi-file-excel me-1"></i>Export Excel
+  </a>
+</div>
+
+<div class="admin-card p-3 mb-3">
+  <form method="GET" class="d-flex gap-2">
+    <input type="text" name="search" class="form-control" placeholder="Search by name / email / company" value="{{ search }}">
+    <button type="submit" class="btn btn-navy px-4"><i class="bi bi-search"></i></button>
+    {% if search %}<a href="{{ url_for('admin_customers') }}" class="btn btn-outline-secondary">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="admin-card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th class="text-center">Total</th><th class="text-center">Approved</th><th>Last Booking</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td class="fw-medium">{{ c.customer_name }}</td>
+          <td><a href="mailto:{{ c.customer_email }}" class="text-decoration-none small">{{ c.customer_email }}</a></td>
+          <td class="small">{{ c.customer_phone or '—' }}</td>
+          <td class="small">{{ c.client_company or '—' }}</td>
+          <td class="text-center"><span class="badge bg-light text-dark border">{{ c.total }}</span></td>
+          <td class="text-center"><span class="badge bg-success bg-opacity-75">{{ c.approved or 0 }}</span></td>
+          <td class="small text-muted">{{ c.last_booking.strftime('%Y-%m-%d') if c.last_booking else '—' }}</td>
+          <td><a href="{{ url_for('admin_bookings') }}?search={{ c.customer_email }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-search me-1"></i>Bookings</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-5"><i class="bi bi-people display-4 d-block mb-2"></i>No customers yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="p-3 text-muted small border-top">{{ customers|length }} customer(s)</div>
+</div>
+{% endblock %}

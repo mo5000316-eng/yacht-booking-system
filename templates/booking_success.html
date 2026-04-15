@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Booking Submitted – Tomorrow World{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 text-center">
+      <div class="card shadow-sm border-0 p-5">
+        <div class="mb-4">
+          <i class="bi bi-check-circle-fill text-success" style="font-size:4rem;"></i>
+        </div>
+        <h2 class="fw-bold text-navy mb-2">Request Submitted!</h2>
+        <p class="text-muted mb-4">We have received your booking request. Please keep your reference number below.</p>
+
+        <div class="booking-ref-box mb-4">
+          <div class="small text-muted mb-1">Your Booking Reference</div>
+          <div class="booking-ref-num">{{ booking.booking_ref }}</div>
+        </div>
+
+        <div class="text-start mb-4">
+          <table class="table table-borderless table-sm">
+            <tr><td class="text-muted">Name</td><td class="fw-medium">{{ booking.customer_name }}</td></tr>
+            <tr><td class="text-muted">Yacht</td><td class="fw-medium">{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</td></tr>
+            <tr><td class="text-muted">Date</td><td class="fw-medium">{{ booking.booking_date }}</td></tr>
+            <tr><td class="text-muted">Time</td><td class="fw-medium">{{ (booking.start_time|string)[:5] }} – {{ (booking.end_time|string)[:5] }}</td></tr>
+            <tr><td class="text-muted">Guests</td><td class="fw-medium">{{ booking.num_passengers }}</td></tr>
+            <tr><td class="text-muted">Status</td>
+              <td><span class="badge bg-{{ booking.status_badge_class }}">{{ booking.status_label }}</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="alert alert-info text-start small">
+          <i class="bi bi-envelope me-2"></i>
+          A confirmation email has been sent to <strong>{{ booking.customer_email }}</strong>.
+          Our team will contact you within one business day.
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center mt-3">
+          <a href="{{ url_for('booking_check') }}?ref={{ booking.booking_ref }}" class="btn btn-outline-navy">
+            <i class="bi bi-search me-2"></i>Track Status
+          </a>
+          <a href="{{ url_for('index') }}" class="btn btn-navy">
+            <i class="bi bi-house me-2"></i>Back to Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

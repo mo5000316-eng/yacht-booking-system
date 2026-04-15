@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Book a Yacht – Tomorrow World{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-navy">
+          <i class="bi bi-calendar-plus me-2"></i>Yacht Booking Request
+        </h2>
+        <p class="text-muted">Please complete the form below. Our team will confirm your booking within one business day.</p>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" id="bookingForm" novalidate>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-person-circle me-2"></i>Contact Information
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label required">Full Name</label>
+                  <input type="text" name="customer_name" class="form-control" placeholder="Your full name" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required">Email Address</label>
+                  <input type="email" name="customer_email" class="form-control" placeholder="example@email.com" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" name="customer_phone" class="form-control" placeholder="+852 xxxx xxxx">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Company / Client Name</label>
+                  <input type="text" name="client_company" class="form-control" placeholder="Agency / Client Name">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-map me-2"></i>Event Details
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Select Yacht</label>
+                  <select name="yacht_id" class="form-select">
+                    <option value="">— No preference, let us arrange —</option>
+                    {% for y in yachts %}
+                    <option value="{{ y.id }}" {% if request.args.get('yacht_id')|int == y.id %}selected{% endif %}>
+                      {{ y.name }} – Up to {{ y.capacity }} guests
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label required">Destination / Itinerary</label>
+                  <input type="text" name="destination" class="form-control"
+                         placeholder="e.g. Deep Sea Fishing / Ocean Adventure / Sunset Cruise" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required">Date</label>
+                  <input type="date" name="booking_date" class="form-control" required
+                         min="{{ now.strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required">Start Time</label>
+                  <input type="time" name="start_time" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required">End Time</label>
+                  <input type="time" name="end_time" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required">Number of Guests</label>
+                  <input type="number" name="num_passengers" class="form-control" min="1" max="50" value="1" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-star me-2"></i>Special Requests
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="has_alcohol" id="has_alcohol" class="form-check-input">
+                        <label class="form-check-label" for="has_alcohol">
+                          <i class="bi bi-cup-straw me-1"></i>Alcoholic Beverages
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="has_pizza" id="has_pizza" class="form-check-input">
+                        <label class="form-check-label" for="has_pizza">
+                          <i class="bi bi-emoji-smile me-1"></i>Pizza / Light Bites
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="has_vegetarian" id="has_vegetarian" class="form-check-input">
+                        <label class="form-check-label" for="has_vegetarian">
+                          <i class="bi bi-leaf me-1"></i>Vegetarian Meal
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="is_offshore" id="is_offshore" class="form-check-input">
+                        <label class="form-check-label" for="is_offshore">
+                          <i class="bi bi-tsunami me-1"></i>Offshore Activity
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="marketing_support" id="marketing_support" class="form-check-input">
+                        <label class="form-check-label" for="marketing_support">
+                          <i class="bi bi-megaphone me-1"></i>Marketing Support
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Food Allergies</label>
+                  <input type="text" name="food_allergies" class="form-control" placeholder="List any food allergies">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Other Requests</label>
+                  <textarea name="other_requests" class="form-control" rows="3"
+                            placeholder="Any other special requirements or notes…"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-navy btn-lg">
+                <i class="bi bi-send me-2"></i>Submit Booking Request
+              </button>
+            </div>
+            <p class="text-center text-muted small mt-3">
+              <i class="bi bi-info-circle me-1"></i>
+              You will receive a confirmation email. Our team will contact you within one business day.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+  var start = document.querySelector('[name=start_time]').value;
+  var end = document.querySelector('[name=end_time]').value;
+  if (start && end && start >= end) {
+    e.preventDefault();
+    alert('End time must be later than start time.');
+  }
+});
+</script>
+{% endblock %}

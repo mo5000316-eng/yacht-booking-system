@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Availability Calendar – Tomorrow World{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-9">
+      <h2 class="fw-bold text-navy mb-4">
+        <i class="bi bi-calendar3 me-2"></i>Availability Calendar
+      </h2>
+      <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+        <label class="form-label mb-0 me-2">Filter by yacht:</label>
+        <select id="yachtFilter" class="form-select w-auto">
+          <option value="">All Yachts</option>
+          {% for y in yachts %}
+          <option value="{{ y.id }}">{{ y.name }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-outline-navy btn-sm" onclick="refreshCalendar()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+        </button>
+      </div>
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-3">
+          <div id="calendar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3">
+      <div class="card shadow-sm border-0 mb-3 mt-5">
+        <div class="card-body p-3">
+          <h6 class="fw-bold mb-3">Legend</h6>
+          <div class="d-flex align-items-center mb-2">
+            <div class="legend-dot" style="background:#ffc107"></div>
+            <span class="small ms-2">Pending</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="legend-dot" style="background:#1B7A4A"></div>
+            <span class="small ms-2">Confirmed</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body p-3">
+          <h6 class="fw-bold mb-3">Our Fleet</h6>
+          {% for y in yachts %}
+          <div class="mb-2 pb-2 {% if not loop.last %}border-bottom{% endif %}">
+            <div class="fw-medium small">{{ y.name }}</div>
+            <div class="text-muted" style="font-size:0.75rem;">
+              <i class="bi bi-people me-1"></i>Up to {{ y.capacity }} guests
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <a href="{{ url_for('booking_customer') }}" class="btn btn-navy w-100">
+        <i class="bi bi-calendar-plus me-2"></i>Book Now
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.js"></script>
+<script>
+var calendar;
+document.addEventListener('DOMContentLoaded', function() {
+  calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+    initialView: 'dayGridMonth',
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
+    buttonText: { today: 'Today', month: 'Month', week: 'Week' },
+    events: fetchEvents,
+    eventClick: function(info) {
+      var p = info.event.extendedProps;
+      alert('Ref: ' + p.ref + '\nStatus: ' + p.status.charAt(0).toUpperCase() + p.status.slice(1));
+    },
+    height: 'auto',
+  });
+  calendar.render();
+});
+function fetchEvents(info, success, fail) {
+  var id = document.getElementById('yachtFilter').value;
+  fetch('/api/calendar' + (id ? '?yacht_id=' + id : ''))
+    .then(r => r.json()).then(success).catch(fail);
+}
+function refreshCalendar() { if (calendar) calendar.refetchEvents(); }
+document.getElementById('yachtFilter').addEventListener('change', refreshCalendar);
+</script>
+<style>.legend-dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }</style>
+{% endblock %}

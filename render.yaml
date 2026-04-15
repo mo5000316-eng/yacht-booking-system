@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: tw-yacht-booking
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tw-yacht-db
+          property: connectionString
+      - key: FLASK_ENV
+        value: production
+
+databases:
+  - name: tw-yacht-db
+    plan: free

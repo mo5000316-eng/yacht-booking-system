@@ -1,0 +1,110 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Staff Accounts – TW Admin{% endblock %}
+{% block breadcrumb %}<span class="text-muted small"><i class="bi bi-person-badge me-1"></i>Staff Accounts</span>{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">Staff Account Management</h4>
+  <button class="btn btn-navy" data-bs-toggle="modal" data-bs-target="#addUserModal">
+    <i class="bi bi-person-plus me-2"></i>Add Account
+  </button>
+</div>
+
+<div class="admin-card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Name</th><th>Username</th><th>Email</th><th>Department</th><th>Job Title</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="fw-medium">{{ u.name or '—' }}</td>
+          <td class="font-monospace small">{{ u.username }}</td>
+          <td class="small">{{ u.email }}</td>
+          <td class="small">{{ u.department or '—' }}</td>
+          <td class="small">{{ u.job_title or '—' }}</td>
+          <td><span class="badge {% if u.role=='admin' %}bg-danger{% else %}bg-primary{% endif %}">{{ u.role.upper() }}</span></td>
+          <td><span class="badge {% if u.is_active %}bg-success{% else %}bg-secondary{% endif %}">{% if u.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+          <td>
+            <div class="d-flex gap-1">
+              {% if u.id != current_user.id %}
+              <form method="POST">
+                <input type="hidden" name="action" value="toggle">
+                <input type="hidden" name="user_id" value="{{ u.id }}">
+                <button type="submit" class="btn btn-sm btn-outline-{{ 'warning' if u.is_active else 'success' }}">
+                  {% if u.is_active %}Disable{% else %}Enable{% endif %}
+                </button>
+              </form>
+              {% endif %}
+              <button class="btn btn-sm btn-outline-secondary" onclick="resetPw({{ u.id }},'{{ u.name or u.username }}')">
+                <i class="bi bi-key"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form method="POST">
+      <input type="hidden" name="action" value="add">
+      <div class="modal-header"><h5 class="modal-title">Add Staff Account</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label required">Full Name</label><input type="text" name="name" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label required">Username</label><input type="text" name="username" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label required">Email</label><input type="email" name="email" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label required">Password</label><input type="password" name="password" class="form-control" required minlength="6"></div>
+          <div class="col-md-6"><label class="form-label">Department</label><input type="text" name="department" class="form-control"></div>
+          <div class="col-md-6"><label class="form-label">Job Title</label><input type="text" name="job_title" class="form-control"></div>
+          <div class="col-md-6"><label class="form-label">Role</label>
+            <select name="role" class="form-select">
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-navy">Create Account</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPwModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form method="POST">
+      <input type="hidden" name="action" value="reset_password">
+      <input type="hidden" name="user_id" id="reset_user_id">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-key me-2"></i>Reset Password</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <p>Reset password for <strong id="reset_user_name"></strong>:</p>
+        <input type="password" name="new_password" class="form-control" placeholder="Enter new password" required minlength="6">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-warning">Reset Password</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function resetPw(id,name){
+  document.getElementById('reset_user_id').value=id;
+  document.getElementById('reset_user_name').textContent=name;
+  new bootstrap.Modal(document.getElementById('resetPwModal')).show();
+}
+</script>
+{% endblock %}

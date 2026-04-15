@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Tomorrow World – Luxury Yacht Experiences{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="tw-hero d-flex align-items-center" style="
+  background-image:
+    linear-gradient(135deg, rgba(13,31,58,0.82) 0%, rgba(27,58,107,0.75) 50%, rgba(30,77,140,0.70) 100%),
+    url('https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?auto=format&fit=crop&w=1800&q=80');
+  background-size: cover;
+  background-position: center 60%;
+">
+  <div class="container text-center text-white">
+    <h1 class="display-4 fw-bold mb-3">Tomorrow World</h1>
+    <p class="lead mb-4">Luxury Yacht Experiences · Premium Concierge Service</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{{ url_for('booking_customer') }}" class="btn btn-gold btn-lg px-5">
+        <i class="bi bi-calendar-plus me-2"></i>Book Now
+      </a>
+      <a href="{{ url_for('calendar') }}" class="btn btn-outline-light btn-lg px-5">
+        <i class="bi bi-calendar3 me-2"></i>Check Availability
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="tw-stats-bar py-3">
+  <div class="container">
+    <div class="row text-center g-3">
+      <div class="col-4">
+        <div class="stat-num">{{ yachts|length }}</div>
+        <div class="stat-lbl">Yachts</div>
+      </div>
+      <div class="col-4">
+        <div class="stat-num">{{ total_bookings }}+</div>
+        <div class="stat-lbl">Successful Charters</div>
+      </div>
+      <div class="col-4">
+        <div class="stat-num">24/7</div>
+        <div class="stat-lbl">Online Booking</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Our Fleet -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">Our Fleet</h2>
+    <div class="row g-4">
+      {% for yacht in yachts %}
+      <div class="col-md-4">
+        <div class="card yacht-card h-100">
+          <div class="yacht-card-img">
+            {% if yacht.image_url %}
+            <img src="{{ yacht.image_url }}" alt="{{ yacht.name }}"
+                 class="w-100 h-100" style="object-fit:cover;">
+            {% else %}
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+              <i class="bi bi-water display-1 text-white opacity-50"></i>
+            </div>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title fw-bold">{{ yacht.name }}</h5>
+            <p class="text-muted small mb-2">{{ yacht.model }}</p>
+            <p class="card-text">{{ yacht.description }}</p>
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <span class="badge tw-badge-navy">
+                <i class="bi bi-people me-1"></i>Up to {{ yacht.capacity }} guests
+              </span>
+              {% if yacht.length_m %}
+              <span class="badge tw-badge-gold">
+                <i class="bi bi-rulers me-1"></i>{{ yacht.length_m }}m
+              </span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <a href="{{ url_for('booking_customer') }}?yacht_id={{ yacht.id }}"
+               class="btn btn-navy w-100">
+              <i class="bi bi-calendar-plus me-2"></i>Book This Yacht
+            </a>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-12 text-center text-muted py-5">
+        <i class="bi bi-water display-3 d-block mb-3"></i>
+        No yachts available at the moment.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">How It Works</h2>
+    <div class="row g-4 text-center">
+      <div class="col-md-3">
+        <div class="step-circle mx-auto mb-3">1</div>
+        <h6 class="fw-bold">Fill in the Form</h6>
+        <p class="small text-muted">Choose your yacht, date, time and number of guests</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-circle mx-auto mb-3">2</div>
+        <h6 class="fw-bold">Submit Request</h6>
+        <p class="small text-muted">Receive an instant confirmation email</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-circle mx-auto mb-3">3</div>
+        <h6 class="fw-bold">Await Approval</h6>
+        <p class="small text-muted">Our team reviews and confirms your booking</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-circle mx-auto mb-3">4</div>
+        <h6 class="fw-bold">Set Sail</h6>
+        <p class="small text-muted">Arrive on time and enjoy your experience</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 tw-cta text-center text-white">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Ready to Set Sail?</h3>
+    <p class="mb-4">Fill in our booking form and our team will confirm your reservation shortly.</p>
+    <a href="{{ url_for('booking_customer') }}" class="btn btn-gold btn-lg px-5">
+      <i class="bi bi-calendar-plus me-2"></i>Book Now
+    </a>
+  </div>
+</section>
+{% endblock %}

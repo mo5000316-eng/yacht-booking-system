@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Check Booking – Tomorrow World{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <h2 class="fw-bold text-navy text-center mb-4">
+        <i class="bi bi-search me-2"></i>Check Booking Status
+      </h2>
+
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <form method="GET" class="d-flex gap-2">
+            <input type="text" name="ref" class="form-control"
+                   placeholder="Enter your booking reference (e.g. TWABCD1234)"
+                   value="{{ ref }}" style="font-family:monospace;">
+            <button type="submit" class="btn btn-navy px-4">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {% if ref and not booking %}
+      <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        No booking found for reference <strong>{{ ref }}</strong>. Please check and try again.
+      </div>
+      {% endif %}
+
+      {% if booking %}
+      <div class="card shadow-sm border-0">
+        <div class="card-header tw-card-header d-flex justify-content-between align-items-center">
+          <span class="fw-bold">{{ booking.booking_ref }}</span>
+          <span class="badge bg-{{ booking.status_badge_class }} fs-6">{{ booking.status_label }}</span>
+        </div>
+        <div class="card-body p-4">
+          <table class="table table-borderless table-sm mb-0">
+            <tr><td class="text-muted" style="width:35%">Name</td><td class="fw-medium">{{ booking.customer_name }}</td></tr>
+            <tr><td class="text-muted">Yacht</td><td class="fw-medium">{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</td></tr>
+            <tr><td class="text-muted">Date</td><td class="fw-medium">{{ booking.booking_date }}</td></tr>
+            <tr><td class="text-muted">Time</td><td class="fw-medium">{{ (booking.start_time|string)[:5] }} – {{ (booking.end_time|string)[:5] }}</td></tr>
+            <tr><td class="text-muted">Guests</td><td class="fw-medium">{{ booking.num_passengers }}</td></tr>
+            <tr><td class="text-muted">Destination</td><td class="fw-medium">{{ booking.destination or '—' }}</td></tr>
+            <tr><td class="text-muted">Type</td><td class="fw-medium">{{ booking.type_label }}</td></tr>
+            <tr><td class="text-muted">Submitted</td><td class="fw-medium">{{ booking.created_at.strftime('%Y-%m-%d %H:%M') if booking.created_at else '—' }}</td></tr>
+            {% if booking.status == 'rejected' and booking.rejection_reason %}
+            <tr><td class="text-muted">Reason</td><td class="text-danger">{{ booking.rejection_reason }}</td></tr>
+            {% endif %}
+          </table>
+
+          {% if booking.status == 'approved' %}
+          <div class="alert alert-success mt-3 mb-0 small">
+            <i class="bi bi-check-circle me-2"></i>Your booking has been approved! Please arrive at the marina on time.
+            {% if booking.approved_at %}Approved on {{ booking.approved_at.strftime('%Y-%m-%d %H:%M') }}.{% endif %}
+          </div>
+          {% elif booking.status == 'pending' %}
+          <div class="alert alert-warning mt-3 mb-0 small">
+            <i class="bi bi-hourglass-split me-2"></i>Your request is under review. We typically respond within one business day.
+          </div>
+          {% elif booking.status == 'rejected' %}
+          <div class="alert alert-danger mt-3 mb-0 small">
+            <i class="bi bi-x-circle me-2"></i>We regret that your request was not approved. Please contact us for assistance.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

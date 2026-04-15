@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Internal Request – Tomorrow World{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-navy">
+          <i class="bi bi-person-badge me-2"></i>Internal Event Request
+        </h2>
+        <p class="text-muted">Staff use only · Requests must be submitted <strong>at least 2 business days</strong> before the event and are subject to management approval.</p>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" novalidate>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-person me-2"></i>Applicant Information
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label required">Employee Name</label>
+                  <input type="text" name="applicant_name" class="form-control" value="{{ user.name }}" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required">Department</label>
+                  <input type="text" name="department" class="form-control" value="{{ user.department or '' }}" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required">Job Title</label>
+                  <input type="text" name="job_title" class="form-control" value="{{ user.job_title or '' }}" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required">Direct Supervisor</label>
+                  <input type="text" name="supervisor" class="form-control" placeholder="Direct Supervisor" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Contact Phone</label>
+                  <input type="tel" name="customer_phone" class="form-control" placeholder="+852 xxxx xxxx">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-building me-2"></i>Client / Event Target
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Agency / Client Name</label>
+                  <input type="text" name="client_company" class="form-control" placeholder="Client company name (if applicable)">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-map me-2"></i>Activity Details
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Select Yacht</label>
+                  <select name="yacht_id" class="form-select">
+                    <option value="">— No preference —</option>
+                    {% for y in yachts %}
+                    <option value="{{ y.id }}">{{ y.name }} – Up to {{ y.capacity }} guests
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label required">Destination / Address</label>
+                  <input type="text" name="destination" class="form-control" placeholder="e.g. Deep Sea Fishing / Ocean Adventure / Sunset Cruise" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required">Date</label>
+                  <input type="date" name="booking_date" class="form-control" required
+                         min="{{ now.strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required">Start Time</label>
+                  <input type="time" name="start_time" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label required">End Time</label>
+                  <input type="time" name="end_time" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label required">Number of Participants</label>
+                  <input type="number" name="num_passengers" class="form-control" min="1" value="1" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section mb-4">
+              <h5 class="form-section-title">
+                <i class="bi bi-list-check me-2"></i>Requested Items
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="has_alcohol" id="has_alcohol" class="form-check-input">
+                        <label class="form-check-label" for="has_alcohol">
+                          <i class="bi bi-cup-straw me-1"></i>Alcohol
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="has_pizza" id="has_pizza" class="form-check-input">
+                        <label class="form-check-label" for="has_pizza">
+                          <i class="bi bi-emoji-smile me-1"></i>Pizza
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="has_vegetarian" id="has_vegetarian" class="form-check-input">
+                        <label class="form-check-label" for="has_vegetarian">
+                          <i class="bi bi-leaf me-1"></i>Vegetarian Meal
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="is_offshore" id="is_offshore" class="form-check-input">
+                        <label class="form-check-label" for="is_offshore">
+                          <i class="bi bi-tsunami me-1"></i>Offshore Activity
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check form-check-lg">
+                        <input type="checkbox" name="marketing_support" id="marketing_support" class="form-check-input">
+                        <label class="form-check-label" for="marketing_support">
+                          <i class="bi bi-megaphone me-1"></i>Request for Marketing Support
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Food Allergies</label>
+                  <input type="text" name="food_allergies" class="form-control" placeholder="List any food allergies">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Other Requests</label>
+                  <textarea name="other_requests" class="form-control" rows="3"
+                            placeholder="Any other requirements…"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info small">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>Note:</strong> This request requires approval from the Sales Admin Manager / Marketing Manager, Executive Assistant, and Director of Operations before it is confirmed.
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-navy btn-lg">
+                <i class="bi bi-send me-2"></i>Submit Internal Request
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

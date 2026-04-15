@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><style>
+  body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;}
+  .container{max-width:580px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;}
+  .header{background:#1B3A6B;color:#fff;padding:30px;text-align:center;}
+  .approved-box{background:#d4edda;border:2px solid #28a745;border-radius:8px;padding:20px;text-align:center;margin:20px 0;}
+  .rejected-box{background:#f8d7da;border:2px solid #dc3545;border-radius:8px;padding:20px;text-align:center;margin:20px 0;}
+  .body{padding:30px;}
+  .detail-table{width:100%;border-collapse:collapse;}
+  .detail-table td{padding:8px 0;border-bottom:1px solid #eee;}
+  .detail-table td:first-child{color:#888;width:40%;}
+  .footer{background:#f0f0f0;padding:20px;text-align:center;font-size:0.8rem;color:#888;}
+</style></head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1 style="margin:0;">⚓ Tomorrow World</h1>
+    <p style="margin:5px 0 0;opacity:0.8;">Booking Status Update</p>
+  </div>
+  <div class="body">
+    <p>Dear <strong>{{ booking.customer_name }}</strong>,</p>
+
+    {% if booking.status == 'approved' %}
+    <div class="approved-box">
+      <div style="font-size:2.5rem;">✅</div>
+      <h2 style="color:#155724;margin:10px 0 5px;">Booking Approved!</h2>
+      <p style="color:#155724;margin:0;">Your booking <strong>{{ booking.booking_ref }}</strong> has been confirmed.</p>
+    </div>
+    <p>Congratulations! Your yacht charter has been confirmed. Please arrive at the marina on time as per the details below.</p>
+    {% else %}
+    <div class="rejected-box">
+      <div style="font-size:2.5rem;">❌</div>
+      <h2 style="color:#721c24;margin:10px 0 5px;">Booking Not Approved</h2>
+      <p style="color:#721c24;margin:0;">We regret that booking <strong>{{ booking.booking_ref }}</strong> could not be confirmed.</p>
+    </div>
+    {% if booking.rejection_reason %}<p><strong>Reason:</strong> {{ booking.rejection_reason }}</p>{% endif %}
+    <p>We apologise for the inconvenience. Please contact our team and we will do our best to assist you.</p>
+    {% endif %}
+
+    <h3 style="color:#1B3A6B;">Booking Details</h3>
+    <table class="detail-table">
+      <tr><td>Reference</td><td><strong>{{ booking.booking_ref }}</strong></td></tr>
+      <tr><td>Yacht</td><td>{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</td></tr>
+      <tr><td>Date</td><td>{{ booking.booking_date }}</td></tr>
+      <tr><td>Time</td><td>{{ (booking.start_time|string)[:5] }} – {{ (booking.end_time|string)[:5] }}</td></tr>
+      <tr><td>Guests</td><td>{{ booking.num_passengers }}</td></tr>
+    </table>
+
+    {% if booking.admin_notes %}
+    <p style="background:#e8f4f8;padding:12px;border-radius:8px;">📝 <strong>Note from our team:</strong> {{ booking.admin_notes }}</p>
+    {% endif %}
+
+    <p style="font-size:0.9rem;">For any enquiries, please contact: <a href="mailto:info@tomorrowworld.com">info@tomorrowworld.com</a></p>
+  </div>
+  <div class="footer">
+    <p>Tomorrow World | Luxury Yacht Experiences</p>
+    <p>This is an automated email, please do not reply directly.</p>
+  </div>
+</div>
+</body></html>

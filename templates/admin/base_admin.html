@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Admin – Tomorrow World{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+  <style>
+    body { background: #F0F2F5; }
+    .admin-sidebar {
+      width: 240px; min-height: 100vh; background: #1B3A6B;
+      position: fixed; top: 0; left: 0; z-index: 1000;
+    }
+    .admin-brand {
+      padding: 1.25rem 1rem; background: #122850; color: #fff;
+      font-weight: 700; font-size: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .admin-nav-link {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.75rem 1.25rem; color: rgba(255,255,255,0.75);
+      text-decoration: none; transition: all .2s; font-size: 0.9rem;
+    }
+    .admin-nav-link:hover, .admin-nav-link.active {
+      background: rgba(255,255,255,0.1); color: #fff;
+    }
+    .admin-nav-section {
+      padding: 1rem 1.25rem 0.25rem;
+      font-size: 0.7rem; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); letter-spacing: 1px;
+    }
+    .admin-main { margin-left: 240px; padding: 1.5rem; min-height: 100vh; }
+    .admin-topbar {
+      background: #fff; border-bottom: 1px solid #e5e7eb;
+      padding: 0.75rem 1.5rem; margin: -1.5rem -1.5rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-card { background: #fff; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+    .stat-card .stat-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .admin-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: none; }
+    .table th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    @media(max-width:768px) { .admin-sidebar { display:none; } .admin-main { margin-left:0; } }
+  </style>
+</head>
+<body>
+
+<div class="admin-sidebar">
+  <div class="admin-brand" style="text-align:center;">
+    <img src="https://tomorrowworldgroup.ae/wp-content/uploads/elementor/thumbs/logo-rid3d7pu8stnbbrg77gvkjggajcmfh06afejp9q6f4.png"
+         alt="Tomorrow World" style="height:36px;object-fit:contain;filter:brightness(0) invert(1);">
+    <div style="font-size:0.7rem;opacity:0.6;margin-top:4px;letter-spacing:1px;">ADMIN PORTAL</div>
+  </div>
+
+  <div class="admin-nav-section">Main</div>
+  <a href="{{ url_for('admin_dashboard') }}"
+     class="admin-nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+    <i class="bi bi-speedometer2"></i>Dashboard
+  </a>
+  <a href="{{ url_for('admin_bookings') }}"
+     class="admin-nav-link {% if request.endpoint in ['admin_bookings','admin_booking_detail'] %}active{% endif %}">
+    <i class="bi bi-calendar-check"></i>All Bookings
+  </a>
+  <a href="{{ url_for('admin_bookings') }}?status=pending" class="admin-nav-link">
+    <i class="bi bi-hourglass-split"></i>Pending Review
+  </a>
+
+  <div class="admin-nav-section">Manage</div>
+  <a href="{{ url_for('admin_yachts') }}"
+     class="admin-nav-link {% if request.endpoint == 'admin_yachts' %}active{% endif %}">
+    <i class="bi bi-water"></i>Yachts
+  </a>
+  <a href="{{ url_for('admin_customers') }}"
+     class="admin-nav-link {% if request.endpoint == 'admin_customers' %}active{% endif %}">
+    <i class="bi bi-people"></i>Customers
+  </a>
+  <a href="{{ url_for('admin_users') }}"
+     class="admin-nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}">
+    <i class="bi bi-person-badge"></i>Staff Accounts
+  </a>
+  <a href="{{ url_for('admin_export') }}" class="admin-nav-link">
+    <i class="bi bi-download"></i>Export Data
+  </a>
+
+  <div class="admin-nav-section">Other</div>
+  <a href="{{ url_for('index') }}" class="admin-nav-link">
+    <i class="bi bi-globe"></i>View Website
+  </a>
+  <a href="{{ url_for('auth_logout') }}" class="admin-nav-link">
+    <i class="bi bi-box-arrow-right"></i>Log Out
+  </a>
+</div>
+
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div>{% block breadcrumb %}<span class="text-muted small">Admin</span>{% endblock %}</div>
+    <div class="d-flex align-items-center gap-3">
+      <span class="small text-muted">
+        <i class="bi bi-person-circle me-1"></i>{{ current_user.name or current_user.username }}
+        <span class="badge bg-navy ms-1">{{ current_user.role.upper() }}</span>
+      </span>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+          {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
