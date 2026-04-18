@@ -964,8 +964,14 @@ def _send_cancellation(booking, cancelled_by='admin', reason=''):
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
-if __name__ == '__main__':
-    with app.app_context():
+# Run DB init at import time so it works under gunicorn (Render / production)
+# as well as `python app.py` (local dev).
+with app.app_context():
+    try:
         init_db()
+    except Exception as e:
+        app.logger.warning(f'init_db on startup failed: {e}')
+
+if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
     app.run(debug=True, host='0.0.0.0', port=port)
