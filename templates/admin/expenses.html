@@ -1,0 +1,129 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Expenses – TW Admin{% endblock %}
+{% block breadcrumb %}
+<span class="text-muted small"><i class="bi bi-cash-coin me-1"></i>Expenses</span>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">Expense Ledger</h4>
+  <a href="{{ url_for('admin_export') }}" class="btn btn-outline-success">
+    <i class="bi bi-file-excel me-1"></i>Export to Excel
+  </a>
+</div>
+
+<!-- Totals + breakdown -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="admin-card p-3 h-100">
+      <div class="small text-muted mb-2">Totals (filtered)</div>
+      {% if totals %}
+        {% for ccy, amt in totals.items() %}
+          <div class="h5 fw-bold mb-0">{{ ccy }} {{ '{:,.2f}'.format(amt|float) }}</div>
+        {% endfor %}
+      {% else %}
+        <div class="h5 text-muted mb-0">No expenses match the current filter.</div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="admin-card p-3 h-100">
+      <div class="small text-muted mb-2">Breakdown by Category (AED)</div>
+      {% if category_breakdown %}
+        <div class="d-flex flex-wrap gap-2">
+          {% for cat, amt in category_breakdown.items() %}
+          <span class="badge bg-secondary bg-opacity-75 fs-6 fw-normal">
+            {{ cat }}: <strong class="ms-1">{{ '{:,.2f}'.format(amt|float) }}</strong>
+          </span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-muted">—</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="admin-card p-3 mb-3">
+  <form method="GET" class="row g-2 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label small mb-1">Category</label>
+      <select name="category" class="form-select form-select-sm">
+        <option value="">All</option>
+        {% for c in categories %}
+        <option value="{{ c }}" {% if c == filters.category %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1">Date from</label>
+      <input type="date" name="date_from" value="{{ filters.date_from }}" class="form-control form-control-sm">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small mb-1">Date to</label>
+      <input type="date" name="date_to" value="{{ filters.date_to }}" class="form-control form-control-sm">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small mb-1">Search</label>
+      <input type="text" name="search" value="{{ filters.search }}"
+             placeholder="Description, receipt, booking ref, customer"
+             class="form-control form-control-sm">
+    </div>
+    <div class="col-md-2 text-end">
+      <button type="submit" class="btn btn-navy btn-sm">
+        <i class="bi bi-funnel me-1"></i>Filter
+      </button>
+      <a href="{{ url_for('admin_expenses') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
+    </div>
+  </form>
+</div>
+
+<!-- Expense table -->
+<div class="admin-card p-3">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Date</th>
+          <th>Booking</th>
+          <th>Customer</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th class="text-end">Amount</th>
+          <th>Receipt</th>
+          <th>Recorded By</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in expenses %}
+        <tr>
+          <td class="small">{{ e.expense_date }}</td>
+          <td class="font-monospace small fw-bold">
+            <a href="{{ url_for('admin_booking_detail', bid=e.booking_id) }}#expenses">{{ e.booking.booking_ref }}</a>
+          </td>
+          <td class="small">{{ e.booking.customer_name }}</td>
+          <td><span class="badge bg-secondary bg-opacity-75">{{ e.category }}</span></td>
+          <td class="small">
+            {{ e.description }}
+            {% if e.notes %}<div class="text-muted" style="font-size:0.73rem;">{{ e.notes }}</div>{% endif %}
+          </td>
+          <td class="text-end small fw-medium">{{ e.currency }} {{ '{:,.2f}'.format(e.amount|float) }}</td>
+          <td class="small">{{ e.receipt_ref or '—' }}</td>
+          <td class="small text-muted">{{ e.recorded_by.name if e.recorded_by else '—' }}</td>
+          <td class="text-end">
+            <a href="{{ url_for('admin_booking_detail', bid=e.booking_id) }}#expenses"
+               class="btn btn-sm btn-outline-secondary" title="Open booking">
+              <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="text-center text-muted py-5">No expenses found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

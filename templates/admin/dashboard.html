@@ -6,7 +6,7 @@
 <h4 class="fw-bold mb-4">Dashboard</h4>
 
 <div class="row g-3 mb-4">
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3 col-xl-2">
     <div class="stat-card">
       <div class="d-flex align-items-center gap-3">
         <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-calendar-check"></i></div>
@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3 col-xl-2">
     <div class="stat-card">
       <div class="d-flex align-items-center gap-3">
         <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-hourglass-split"></i></div>
@@ -22,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3 col-xl-2">
     <div class="stat-card">
       <div class="d-flex align-items-center gap-3">
         <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-check-circle"></i></div>
@@ -30,13 +30,28 @@
       </div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
+  <div class="col-6 col-md-3 col-xl-2">
     <div class="stat-card">
       <div class="d-flex align-items-center gap-3">
         <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-people"></i></div>
         <div><div class="h4 mb-0 fw-bold">{{ stats.customers }}</div><div class="small text-muted">Customers</div></div>
       </div>
     </div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <a href="{{ url_for('admin_expenses') }}" class="text-decoration-none text-dark">
+      <div class="stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-cash-coin"></i></div>
+          <div>
+            <div class="h4 mb-0 fw-bold">
+              AED {{ '{:,.2f}'.format(stats.month_expense_total) }}
+            </div>
+            <div class="small text-muted">Expenses — {{ stats.month_label }}</div>
+          </div>
+        </div>
+      </div>
+    </a>
   </div>
 </div>
 

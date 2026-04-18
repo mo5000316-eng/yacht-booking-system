@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><style>
-  body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;}
-  .container{max-width:580px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;color:#333;}
+  .container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;}
   .header{background:#1B3A6B;color:#fff;padding:30px;text-align:center;}
   .approved-box{background:#d4edda;border:2px solid #28a745;border-radius:8px;padding:20px;text-align:center;margin:20px 0;}
   .rejected-box{background:#f8d7da;border:2px solid #dc3545;border-radius:8px;padding:20px;text-align:center;margin:20px 0;}
   .body{padding:30px;}
-  .detail-table{width:100%;border-collapse:collapse;}
-  .detail-table td{padding:8px 0;border-bottom:1px solid #eee;}
+  .detail-table{width:100%;border-collapse:collapse;margin:10px 0 18px;}
+  .detail-table td{padding:8px 0;border-bottom:1px solid #eee;vertical-align:top;}
   .detail-table td:first-child{color:#888;width:40%;}
+  .section-title{color:#1B3A6B;margin:18px 0 6px;font-size:1rem;}
   .footer{background:#f0f0f0;padding:20px;text-align:center;font-size:0.8rem;color:#888;}
 </style></head>
 <body>
@@ -34,17 +35,21 @@
       <h2 style="color:#721c24;margin:10px 0 5px;">Booking Not Approved</h2>
       <p style="color:#721c24;margin:0;">We regret that booking <strong>{{ booking.booking_ref }}</strong> could not be confirmed.</p>
     </div>
-    {% if booking.rejection_reason %}<p><strong>Reason:</strong> {{ booking.rejection_reason }}</p>{% endif %}
-    <p>We apologise for the inconvenience. Please contact our team and we will do our best to assist you.</p>
+    {% if booking.rejection_reason %}
+    <p style="background:#fff3cd;padding:12px;border-radius:8px;"><strong>Reason:</strong> {{ booking.rejection_reason }}</p>
+    {% endif %}
+    <p>We apologise for the inconvenience. Please contact our team and we will do our best to assist you with alternative arrangements.</p>
     {% endif %}
 
-    <h3 style="color:#1B3A6B;">Booking Details</h3>
+    <h3 class="section-title">Booking Details</h3>
     <table class="detail-table">
       <tr><td>Reference</td><td><strong>{{ booking.booking_ref }}</strong></td></tr>
       <tr><td>Yacht</td><td>{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</td></tr>
       <tr><td>Date</td><td>{{ booking.booking_date }}</td></tr>
       <tr><td>Time</td><td>{{ (booking.start_time|string)[:5] }} – {{ (booking.end_time|string)[:5] }}</td></tr>
       <tr><td>Guests</td><td>{{ booking.num_passengers }}</td></tr>
+      <tr><td>Destination</td><td>{{ booking.destination or 'To be confirmed' }}</td></tr>
+      {% if booking.project %}<tr><td>Project</td><td>{{ booking.project }}{% if booking.unit_number %} – Unit {{ booking.unit_number }}{% endif %}</td></tr>{% endif %}
     </table>
 
     {% if booking.admin_notes %}

@@ -49,7 +49,7 @@
 
 <div class="admin-sidebar">
   <div class="admin-brand" style="text-align:center;">
-    <img src="https://tomorrowworldgroup.ae/wp-content/uploads/elementor/thumbs/logo-rid3d7pu8stnbbrg77gvkjggajcmfh06afejp9q6f4.png"
+    <img src="{{ url_for('static', filename='img/logo.png') }}"
          alt="Tomorrow World" style="height:36px;object-fit:contain;filter:brightness(0) invert(1);">
     <div style="font-size:0.7rem;opacity:0.6;margin-top:4px;letter-spacing:1px;">ADMIN PORTAL</div>
   </div>
@@ -75,6 +75,10 @@
   <a href="{{ url_for('admin_customers') }}"
      class="admin-nav-link {% if request.endpoint == 'admin_customers' %}active{% endif %}">
     <i class="bi bi-people"></i>Customers
+  </a>
+  <a href="{{ url_for('admin_expenses') }}"
+     class="admin-nav-link {% if request.endpoint == 'admin_expenses' %}active{% endif %}">
+    <i class="bi bi-cash-coin"></i>Expenses
   </a>
   <a href="{{ url_for('admin_users') }}"
      class="admin-nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}">

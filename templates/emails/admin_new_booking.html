@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><style>
+  body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;color:#333;}
+  .container{max-width:620px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;}
+  .header{background:#1B3A6B;color:#fff;padding:24px 30px;}
+  .header h1{margin:0;font-size:1.2rem;letter-spacing:0.5px;}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:bold;}
+  .badge-customer{background:#e3f2fd;color:#0b5ed7;}
+  .badge-internal{background:#fff3cd;color:#856404;}
+  .body{padding:24px 30px;}
+  .ref-num{font-family:monospace;font-size:1.1rem;color:#1B3A6B;font-weight:bold;}
+  .detail-table{width:100%;border-collapse:collapse;margin:10px 0 18px;}
+  .detail-table td{padding:6px 0;border-bottom:1px solid #eee;font-size:0.92rem;vertical-align:top;}
+  .detail-table td:first-child{color:#888;width:38%;}
+  .section-title{color:#1B3A6B;margin:20px 0 6px;font-size:1rem;border-bottom:2px solid #1B3A6B;padding-bottom:4px;}
+  .btn{display:inline-block;padding:10px 22px;background:#1B3A6B;color:#fff !important;text-decoration:none;border-radius:6px;font-weight:bold;font-size:0.9rem;}
+  .btn-wrap{text-align:center;margin:22px 0 6px;}
+  .footer{background:#f0f0f0;padding:16px 30px;text-align:center;font-size:0.78rem;color:#888;}
+  ul.requests{margin:6px 0 0 18px;padding:0;font-size:0.9rem;}
+</style></head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>⚓ Tomorrow World — New Booking Submitted</h1>
+  </div>
+  <div class="body">
+    <p style="margin-top:0;">
+      A new
+      {% if booking.booking_type == 'customer' %}
+        <span class="badge badge-customer">Customer Booking</span>
+      {% else %}
+        <span class="badge badge-internal">Internal Request</span>
+      {% endif %}
+      has just been submitted and is awaiting your review.
+    </p>
+
+    <p>
+      <strong>Reference:</strong> <span class="ref-num">{{ booking.booking_ref }}</span><br>
+      <strong>Submitted:</strong> {{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}
+    </p>
+
+    <div class="section-title">Applicant</div>
+    <table class="detail-table">
+      <tr><td>Name</td><td><strong>{{ booking.customer_name }}</strong></td></tr>
+      <tr><td>Email</td><td><a href="mailto:{{ booking.customer_email }}">{{ booking.customer_email }}</a></td></tr>
+      {% if booking.customer_phone %}<tr><td>Phone</td><td>{{ booking.customer_phone }}</td></tr>{% endif %}
+      {% if booking.client_company %}<tr><td>Client / Company</td><td>{{ booking.client_company }}</td></tr>{% endif %}
+      {% if booking.project %}<tr><td>Project</td><td>{{ booking.project }}{% if booking.unit_number %} – Unit {{ booking.unit_number }}{% endif %}</td></tr>{% endif %}
+      {% if booking.booking_type == 'internal' %}
+        {% if booking.department %}<tr><td>Department</td><td>{{ booking.department }}</td></tr>{% endif %}
+        {% if booking.job_title %}<tr><td>Job Title</td><td>{{ booking.job_title }}</td></tr>{% endif %}
+        {% if booking.supervisor %}<tr><td>Supervisor</td><td>{{ booking.supervisor }}</td></tr>{% endif %}
+      {% endif %}
+    </table>
+
+    <div class="section-title">Booking Details</div>
+    <table class="detail-table">
+      <tr><td>Yacht</td><td><strong>{{ booking.yacht.name if booking.yacht else 'To be assigned' }}</strong></td></tr>
+      <tr><td>Date</td><td><strong>{{ booking.booking_date }}</strong></td></tr>
+      <tr><td>Time</td><td><strong>{{ (booking.start_time|string)[:5] }} – {{ (booking.end_time|string)[:5] }}</strong></td></tr>
+      <tr><td>Guests</td><td>{{ booking.num_passengers }}</td></tr>
+      <tr><td>Destination</td><td>{{ booking.destination or 'To be confirmed' }}</td></tr>
+    </table>
+
+    {% if booking.has_alcohol or booking.has_pizza or booking.has_vegetarian or booking.is_offshore or booking.food_allergies or booking.marketing_support or booking.other_requests %}
+    <div class="section-title">Special Requests</div>
+    <ul class="requests">
+      {% if booking.has_alcohol %}<li>Alcoholic beverages</li>{% endif %}
+      {% if booking.has_pizza %}<li>Pizza / light bites</li>{% endif %}
+      {% if booking.has_vegetarian %}<li>Vegetarian meal</li>{% endif %}
+      {% if booking.is_offshore %}<li>Offshore activity</li>{% endif %}
+      {% if booking.marketing_support %}<li>Marketing support required</li>{% endif %}
+      {% if booking.food_allergies %}<li>Food allergies: {{ booking.food_allergies }}</li>{% endif %}
+      {% if booking.other_requests %}<li>Other: {{ booking.other_requests }}</li>{% endif %}
+    </ul>
+    {% endif %}
+
+    {% if review_url %}
+    <div class="btn-wrap">
+      <a href="{{ review_url }}" class="btn">Review in Admin Panel →</a>
+    </div>
+    {% endif %}
+
+    <p style="font-size:0.82rem;color:#888;margin-top:18px;">
+      This notification was sent to the Tomorrow World admin mailbox because a new booking is waiting for action.
+    </p>
+  </div>
+  <div class="footer">
+    <p style="margin:0;">Tomorrow World | Internal Admin Notification</p>
+  </div>
+</div>
+</body></html>

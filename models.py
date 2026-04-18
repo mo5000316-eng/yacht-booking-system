@@ -151,3 +151,47 @@ class Booking(db.Model):
 
     def __repr__(self):
         return f'<Booking {self.booking_ref}>'
+
+    @property
+    def total_expenses(self):
+        """Sum of all expenses attached to this booking, in the booking currency."""
+        return sum((e.amount or 0) for e in self.expenses)
+
+
+class Expense(db.Model):
+    """A cost line-item recorded against a completed booking (fuel, crew, catering, etc.)."""
+    __tablename__ = 'expenses'
+
+    CATEGORIES = [
+        'Fuel',
+        'Crew',
+        'Catering',
+        'Marina Fee',
+        'Cleaning',
+        'Maintenance',
+        'Marketing',
+        'Other',
+    ]
+
+    id = db.Column(db.Integer, primary_key=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.id', ondelete='CASCADE'),
+                           nullable=False, index=True)
+    category = db.Column(db.String(40), nullable=False, default='Other')
+    description = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.Numeric(12, 2), nullable=False, default=0)
+    currency = db.Column(db.String(8), nullable=False, default='AED')
+    expense_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    receipt_ref = db.Column(db.String(80))
+    notes = db.Column(db.Text)
+
+    recorded_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    booking = db.relationship('Booking', backref=db.backref(
+        'expenses', lazy=True, cascade='all, delete-orphan',
+        order_by='Expense.expense_date.desc()'))
+    recorded_by = db.relationship('User', foreign_keys=[recorded_by_id])
+
+    def __repr__(self):
+        return f'<Expense {self.category} {self.amount} {self.currency} on {self.expense_date}>'

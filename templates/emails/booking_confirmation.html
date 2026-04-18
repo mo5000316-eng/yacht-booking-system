@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><style>
-  body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;}
-  .container{max-width:580px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;}
+  body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;color:#333;}
+  .container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;}
   .header{background:#1B3A6B;color:#fff;padding:30px;text-align:center;}
   .body{padding:30px;}
   .ref-box{background:#f0f4ff;border:2px solid #1B3A6B;border-radius:8px;text-align:center;padding:16px;margin:20px 0;}
   .ref-num{font-size:1.8rem;font-weight:bold;font-family:monospace;color:#1B3A6B;}
-  .detail-table{width:100%;border-collapse:collapse;margin:16px 0;}
-  .detail-table td{padding:8px 0;border-bottom:1px solid #eee;}
+  .detail-table{width:100%;border-collapse:collapse;margin:10px 0 18px;}
+  .detail-table td{padding:8px 0;border-bottom:1px solid #eee;vertical-align:top;}
   .detail-table td:first-child{color:#888;width:40%;}
+  .section-title{color:#1B3A6B;margin:18px 0 6px;font-size:1rem;}
   .footer{background:#f0f0f0;padding:20px;text-align:center;font-size:0.8rem;color:#888;}
 </style></head>
 <body>
@@ -25,34 +26,42 @@
     <div class="ref-box">
       <div style="font-size:0.85rem;color:#888;margin-bottom:4px;">Your Booking Reference</div>
       <div class="ref-num">{{ booking.booking_ref }}</div>
-      <div style="margin-top:6px;"><span style="background:#fff3cd;color:#856404;padding:4px 12px;border-radius:20px;font-size:0.8rem;">Pending Review</span></div>
+      <div style="margin-top:6px;">
+        <span style="background:#fff3cd;color:#856404;padding:4px 12px;border-radius:20px;font-size:0.8rem;">Pending Review</span>
+      </div>
     </div>
 
-    <h3 style="color:#1B3A6B;">Booking Details</h3>
+    <h3 class="section-title">Booking Details</h3>
     <table class="detail-table">
       <tr><td>Yacht</td><td><strong>{{ booking.yacht.name if booking.yacht else 'To be confirmed' }}</strong></td></tr>
       <tr><td>Date</td><td><strong>{{ booking.booking_date }}</strong></td></tr>
       <tr><td>Time</td><td><strong>{{ (booking.start_time|string)[:5] }} – {{ (booking.end_time|string)[:5] }}</strong></td></tr>
       <tr><td>Guests</td><td><strong>{{ booking.num_passengers }}</strong></td></tr>
       <tr><td>Destination</td><td>{{ booking.destination or 'To be confirmed' }}</td></tr>
+      {% if booking.project %}<tr><td>Project</td><td>{{ booking.project }}{% if booking.unit_number %} – Unit {{ booking.unit_number }}{% endif %}</td></tr>{% endif %}
+      {% if booking.client_company %}<tr><td>Client / Company</td><td>{{ booking.client_company }}</td></tr>{% endif %}
     </table>
 
-    {% if booking.has_alcohol or booking.has_pizza or booking.has_vegetarian or booking.is_offshore or booking.food_allergies %}
-    <h4 style="color:#1B3A6B;">Special Requests</h4>
+    {% if booking.has_alcohol or booking.has_pizza or booking.has_vegetarian or booking.is_offshore or booking.food_allergies or booking.marketing_support or booking.other_requests %}
+    <h4 class="section-title">Special Requests</h4>
     <ul>
       {% if booking.has_alcohol %}<li>Alcoholic beverages</li>{% endif %}
       {% if booking.has_pizza %}<li>Pizza / light bites</li>{% endif %}
       {% if booking.has_vegetarian %}<li>Vegetarian meal</li>{% endif %}
       {% if booking.is_offshore %}<li>Offshore activity</li>{% endif %}
+      {% if booking.marketing_support %}<li>Marketing support required</li>{% endif %}
       {% if booking.food_allergies %}<li>Food allergies: {{ booking.food_allergies }}</li>{% endif %}
+      {% if booking.other_requests %}<li>Other requests: {{ booking.other_requests }}</li>{% endif %}
     </ul>
     {% endif %}
 
     <p style="background:#fff8e1;padding:12px;border-radius:8px;font-size:0.9rem;">
       📋 <strong>Next steps:</strong> Our team will review your request and notify you within one business day.<br>
-      For enquiries, contact us at: <a href="mailto:info@tomorrowworld.com">info@tomorrowworld.com</a>
+      For enquiries, please contact: <a href="mailto:info@tomorrowworld.com">info@tomorrowworld.com</a>
     </p>
-    <p style="font-size:0.9rem;color:#888;">You can also check your booking status online using reference <strong>{{ booking.booking_ref }}</strong>.</p>
+    <p style="font-size:0.9rem;color:#888;">
+      You can also check your booking status online using reference <strong>{{ booking.booking_ref }}</strong>.
+    </p>
   </div>
   <div class="footer">
     <p>Tomorrow World | Luxury Yacht Experiences</p>
