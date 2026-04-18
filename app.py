@@ -742,24 +742,53 @@ def admin_yachts():
 @login_required
 @admin_required
 def admin_customers():
-    search = request.args.get('search', '').strip()
-    q = db.session.query(
-        db.func.max(Booking.customer_name).label('customer_name'),
-        Booking.customer_email.label('customer_email'),
-        db.func.max(Booking.customer_phone).label('customer_phone'),
-        db.func.max(Booking.client_company).label('client_company'),
-        db.func.count(Booking.id).label('total'),
-        db.func.sum(db.case((Booking.status == 'approved', 1), else_=0)).label('approved'),
-        db.func.max(Booking.created_at).label('last_booking'),
-    ).group_by(Booking.customer_email)
+    """Aggregate customers from all bookings.
+
+    Done in Python (not SQL GROUP BY) so the query works identically
+    on SQLite and Postgres without worrying about strict GROUP BY rules
+    or SQLAlchemy case() syntax differences.
+    """
+    from types import SimpleNamespace
+
+    search = request.args.get('search', '').strip().lower()
+    bookings = Booking.query.order_by(Booking.created_at.desc()).all()
+
+    by_email = {}
+    for b in bookings:
+        email = (b.customer_email or '').lower()
+        if not email:
+            continue
+        if email not in by_email:
+            by_email[email] = SimpleNamespace(
+                customer_name=b.customer_name,
+                customer_email=b.customer_email,
+                customer_phone=b.customer_phone,
+                client_company=b.client_company,
+                total=0,
+                approved=0,
+                last_booking=b.created_at,
+            )
+        c = by_email[email]
+        c.total += 1
+        if b.status == 'approved':
+            c.approved += 1
+        # Keep the most recent booking's details (bookings are already DESC-sorted)
+        if b.created_at and (c.last_booking is None or b.created_at > c.last_booking):
+            c.last_booking = b.created_at
+
+    customers = list(by_email.values())
+
     if search:
-        q = q.filter(db.or_(
-            Booking.customer_name.ilike(f'%{search}%'),
-            Booking.customer_email.ilike(f'%{search}%'),
-            Booking.client_company.ilike(f'%{search}%'),
-        ))
-    customers = q.order_by(db.func.max(Booking.created_at).desc()).all()
-    return render_template('admin/customers.html', customers=customers, search=search)
+        customers = [
+            c for c in customers
+            if search in (c.customer_name or '').lower()
+            or search in (c.customer_email or '').lower()
+            or search in (c.client_company or '').lower()
+        ]
+
+    customers.sort(key=lambda c: c.last_booking or datetime.min, reverse=True)
+
+    return render_template('admin/customers.html', customers=customers, search=request.args.get('search', '').strip())
 
 
 @app.route('/admin/users', methods=['GET', 'POST'])
