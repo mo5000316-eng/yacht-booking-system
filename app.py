@@ -744,8 +744,10 @@ def admin_yachts():
 def admin_customers():
     search = request.args.get('search', '').strip()
     q = db.session.query(
-        Booking.customer_name, Booking.customer_email, Booking.customer_phone,
-        Booking.client_company,
+        db.func.max(Booking.customer_name).label('customer_name'),
+        Booking.customer_email.label('customer_email'),
+        db.func.max(Booking.customer_phone).label('customer_phone'),
+        db.func.max(Booking.client_company).label('client_company'),
         db.func.count(Booking.id).label('total'),
         db.func.sum(db.case((Booking.status == 'approved', 1), else_=0)).label('approved'),
         db.func.max(Booking.created_at).label('last_booking'),
