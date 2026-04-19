@@ -21,8 +21,9 @@ body {
 
 /* ---- Navbar ---- */
 .tw-navbar {
-  background: rgba(27, 58, 107, 0.97);
-  backdrop-filter: blur(8px);
+  background: rgba(27, 58, 107, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 0.6rem 0;
 }
 .tw-navbar .navbar-brand { color: var(--tw-gold) !important; letter-spacing: 0.5px; }
