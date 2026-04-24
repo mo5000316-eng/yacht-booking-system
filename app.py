@@ -246,12 +246,14 @@ def api_calendar():
     events = []
     for b in query.all():
         color = '#ffc107' if b.status == 'pending' else '#1B7A4A'
+        class_name = 'status-pending' if b.status == 'pending' else 'status-confirmed'
         events.append({
             'id': b.id,
             'title': f'{b.yacht.name if b.yacht else "TBC"} | {b.num_passengers} guests',
             'start': f'{b.booking_date}T{b.start_time}',
             'end': f'{b.booking_date}T{b.end_time}',
             'color': color,
+            'classNames': [class_name],
             'extendedProps': {'status': b.status, 'ref': b.booking_ref},
         })
     return jsonify(events)

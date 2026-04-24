@@ -23,35 +23,35 @@
           <i class="bi bi-arrow-clockwise me-1"></i>Refresh
         </button>
       </div>
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-3">
+      <div class="card calendar-wrapper">
+        <div class="card-body p-3 p-md-4">
           <div id="calendar"></div>
         </div>
       </div>
     </div>
 
     <div class="col-lg-3">
-      <div class="card shadow-sm border-0 mb-3 mt-5">
+      <div class="card sidebar-card mb-3 mt-lg-5">
         <div class="card-body p-3">
-          <h6 class="fw-bold mb-3">Legend</h6>
+          <div class="card-title-accent">Legend</div>
           <div class="d-flex align-items-center mb-2">
-            <div class="legend-dot" style="background:#ffc107"></div>
-            <span class="small ms-2">Pending</span>
+            <div class="legend-dot legend-pending"></div>
+            <span class="small ms-2 fw-medium">Pending</span>
           </div>
           <div class="d-flex align-items-center">
-            <div class="legend-dot" style="background:#1B7A4A"></div>
-            <span class="small ms-2">Confirmed</span>
+            <div class="legend-dot legend-confirmed"></div>
+            <span class="small ms-2 fw-medium">Confirmed</span>
           </div>
         </div>
       </div>
 
-      <div class="card shadow-sm border-0 mb-3">
+      <div class="card sidebar-card mb-3">
         <div class="card-body p-3">
-          <h6 class="fw-bold mb-3">Our Fleet</h6>
+          <div class="card-title-accent">Our Fleet</div>
           {% for y in yachts %}
-          <div class="mb-2 pb-2 {% if not loop.last %}border-bottom{% endif %}">
-            <div class="fw-medium small">{{ y.name }}</div>
-            <div class="text-muted" style="font-size:0.75rem;">
+          <div class="fleet-item mb-1">
+            <div class="fleet-name">{{ y.name }}</div>
+            <div class="fleet-cap">
               <i class="bi bi-people me-1"></i>Up to {{ y.capacity }} guests
             </div>
           </div>
@@ -59,7 +59,7 @@
         </div>
       </div>
 
-      <a href="{{ url_for('booking_customer') }}" class="btn btn-navy w-100">
+      <a href="{{ url_for('booking_customer') }}" class="btn btn-book-cta w-100">
         <i class="bi bi-calendar-plus me-2"></i>Book Now
       </a>
     </div>
@@ -93,5 +93,4 @@ function fetchEvents(info, success, fail) {
 function refreshCalendar() { if (calendar) calendar.refetchEvents(); }
 document.getElementById('yachtFilter').addEventListener('change', refreshCalendar);
 </script>
-<style>.legend-dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }</style>
 {% endblock %}
