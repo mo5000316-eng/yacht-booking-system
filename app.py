@@ -995,6 +995,42 @@ def _send_cancellation(booking, cancelled_by='admin', reason=''):
 
 
 # ---------------------------------------------------------------------------
+# Error handlers — render friendly branded pages instead of Flask's default
+# white error screen (which users can misread as "page not found / broken").
+# ---------------------------------------------------------------------------
+@app.errorhandler(404)
+def error_404(e):
+    return render_template('error.html',
+                           code=404,
+                           title='Page Not Found',
+                           message='The page you are looking for does not exist or has been moved.'), 404
+
+@app.errorhandler(500)
+def error_500(e):
+    # Rollback any pending DB transaction so the next request is clean
+    try:
+        db.session.rollback()
+    except Exception:
+        pass
+    return render_template('error.html',
+                           code=500,
+                           title='Server Error',
+                           message='Something went wrong on our side. Please try again in a moment.'), 500
+
+@app.errorhandler(502)
+def error_502(e):
+    return render_template('error.html',
+                           code=502,
+                           title='Service Waking Up',
+                           message='Our service is waking up from idle. Please refresh in a few seconds.'), 502
+
+# Lightweight health-check endpoint — Render can hit this to keep the service warm
+@app.route('/healthz')
+def healthz():
+    return {'status': 'ok'}, 200
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 # Run DB init at import time so it works under gunicorn (Render / production)

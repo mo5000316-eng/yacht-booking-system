@@ -3,7 +3,11 @@ services:
     name: tw-yacht-booking
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --workers 2 --bind 0.0.0.0:$PORT
+    # --timeout 120: give workers up to 2 min to handle cold-start requests (default 30s kills them)
+    # --graceful-timeout 30: wait for in-flight requests before killing worker on restart
+    # --keep-alive 5: keep idle keep-alive connections open 5s (helps nav navigation)
+    # --preload: initialize app in master before forking workers (faster boot, single init_db run)
+    startCommand: gunicorn app:app --workers 2 --bind 0.0.0.0:$PORT --timeout 120 --graceful-timeout 30 --keep-alive 5 --preload
     envVars:
       - key: SECRET_KEY
         generateValue: true

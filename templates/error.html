@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} – {{ title }} | Tomorrow World{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="error-page">
+    <div class="error-code">{{ code }}</div>
+    <h1 class="error-title">{{ title }}</h1>
+    <p class="error-message">{{ message }}</p>
+
+    <div class="error-actions d-flex justify-content-center gap-3 flex-wrap mt-4">
+      <a href="{{ url_for('index') }}" class="btn btn-navy btn-lg px-4">
+        <i class="bi bi-house-door me-2"></i>Back to Home
+      </a>
+      <a href="javascript:location.reload()" class="btn btn-outline-navy btn-lg px-4">
+        <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+      </a>
+    </div>
+
+    {% if code == 502 %}
+    <p class="small text-muted mt-4">
+      <i class="bi bi-info-circle me-1"></i>
+      This usually clears within 30 seconds. Service is hosted on a free tier that sleeps when idle.
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+.error-page {
+  text-align: center;
+  padding: 6rem 1rem;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.error-code {
+  font-size: 8rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--tw-navy), var(--tw-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -4px;
+  margin-bottom: 1rem;
+}
+.error-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--tw-navy);
+  margin-bottom: 0.5rem;
+}
+.error-message {
+  color: #6c757d;
+  font-size: 1.05rem;
+  margin-bottom: 0;
+}
+@media (max-width: 576px) {
+  .error-code { font-size: 5.5rem; }
+  .error-title { font-size: 1.35rem; }
+  .error-page { padding: 4rem 1rem; }
+}
+</style>
+{% endblock %}

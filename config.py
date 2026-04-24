@@ -14,6 +14,16 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Connection-pool tuning — critical on Render free tier where idle DB connections
+    # get closed server-side after inactivity. Without pre_ping, stale connections
+    # cause "connection already closed" errors on the first request after idle.
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,   # verify connection is alive before using it
+        'pool_recycle': 280,     # recycle connections every ~5 min (shorter than Render's idle timeout)
+        'pool_size': 5,
+        'max_overflow': 5,
+    }
+
     # Email (可選，不設定則略過 Email 功能)
     # 預設用 Gmail port 465 (SSL)，比 587 (STARTTLS) 更不容易被網路擋
     # 如要切回 STARTTLS：設 MAIL_PORT=587 + MAIL_USE_TLS=true + MAIL_USE_SSL=false
