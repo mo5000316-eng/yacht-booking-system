@@ -38,11 +38,153 @@ body {
 }
 .tw-navbar .nav-link:hover::after { width: 70%; left: 15%; }
 
-/* ---- Hero ---- */
+/* ---- Hero (with video background) ---- */
 .tw-hero {
-  min-height: 560px;
-  padding: 6rem 0 4rem;
+  position: relative;
+  min-height: 88vh;
+  padding: 6rem 0 5rem;
   margin-top: 56px;
+  overflow: hidden;
+  background: #0D1F3A; /* dark fallback while video loads */
+}
+
+/* Video layer – full cover */
+.tw-hero-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+/* Static image fallback – sits behind video, shows on mobile */
+.tw-hero-fallback {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center 60%;
+  z-index: 0;
+}
+
+/* Dark cinematic overlay – radial + linear for depth */
+.tw-hero-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse at center, rgba(13,31,58,0.35) 0%, rgba(13,31,58,0.72) 100%),
+    linear-gradient(180deg, rgba(13,31,58,0.4) 0%, rgba(13,31,58,0.15) 45%, rgba(13,31,58,0.75) 100%);
+  z-index: 1;
+}
+
+/* Content layer */
+.tw-hero-content {
+  z-index: 2;
+}
+
+/* Small gold "eyebrow" badge above the title */
+.tw-hero-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(201, 168, 76, 0.5);
+  border-radius: 50px;
+  color: var(--tw-gold);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  animation: heroFadeUp 0.9s ease 0.1s forwards;
+}
+
+.tw-hero-title {
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  opacity: 0;
+  animation: heroFadeUp 1s ease 0.3s forwards;
+}
+
+.tw-hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  opacity: 0;
+  animation: heroFadeUp 1s ease 0.5s forwards;
+}
+
+.tw-hero-cta {
+  opacity: 0;
+  animation: heroFadeUp 1s ease 0.7s forwards;
+}
+.tw-hero-cta .btn { min-width: 200px; font-weight: 600; letter-spacing: 0.5px; }
+.tw-hero-cta .btn-gold {
+  background: linear-gradient(135deg, #d4b45a, var(--tw-gold));
+  box-shadow: 0 6px 20px rgba(201,168,76,0.45);
+  border: none;
+}
+.tw-hero-cta .btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(201,168,76,0.55);
+  background: linear-gradient(135deg, #e2c26e, #d4b45a);
+}
+.tw-hero-cta .btn-outline-light:hover {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll-down indicator */
+.tw-scroll-indicator {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px; height: 44px;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center; justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  z-index: 2;
+  animation: scrollBounce 2.2s ease-in-out infinite;
+  transition: all .2s;
+}
+.tw-scroll-indicator:hover {
+  border-color: var(--tw-gold);
+  color: var(--tw-gold);
+  background: rgba(201,168,76,0.1);
+}
+@keyframes scrollBounce {
+  0%,100% { transform: translate(-50%, 0); }
+  50%     { transform: translate(-50%, 10px); }
+}
+
+/* Mobile: hide video (save data), show static image instead */
+@media (max-width: 768px) {
+  .tw-hero { min-height: 75vh; padding: 4rem 0 3rem; }
+  .tw-hero-video { display: none; }
+  .tw-hero-title { font-size: 2.5rem; }
+  .tw-hero-subtitle { font-size: 1rem; }
+  .tw-hero-cta .btn { min-width: 160px; }
+}
+
+/* Respect user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .tw-hero-video { display: none; }
+  .tw-hero-badge, .tw-hero-title, .tw-hero-subtitle, .tw-hero-cta { animation: none; opacity: 1; }
+  .tw-scroll-indicator { animation: none; }
 }
 
 /* ---- Stats Bar ---- */
